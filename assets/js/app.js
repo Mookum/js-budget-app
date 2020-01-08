@@ -35,6 +35,14 @@ let budgetController = (function() {
 // UI controller
 let UIController = (function() {
 
+    // Domstrings && var
+    let DomStrings = {
+      inputType: '.add__type',
+      inputDescription: '.add__description',
+      inputValue: '.add__value',
+      inputBtn: '.add__btn'
+    };
+
     // Get the values from the form
     // + / -
     // Description
@@ -42,10 +50,14 @@ let UIController = (function() {
     return {
         getInput: function() {
             return {
-                type: document.querySelector('.add__type').value, // will be either inc or exp
-                description: document.querySelector('.add__description').value,
-                value: document.querySelector('.add__value').value
+                type: document.querySelector(DomStrings.inputType).value, // will be either inc or exp
+                description: document.querySelector(DomStrings.inputDescription).value,
+                value: document.querySelector(DomStrings.inputValue).value,
             }
+        },
+
+        getDomStrings: function () {
+            return DomStrings;
         }
     };
 
@@ -57,11 +69,13 @@ let appController = (function(fn1, fn2) {
 
     // variables
     let input;
+    let DomStrings = UIController.getDomStrings();
 
     let addItem = function() {
 
         // 1. Get the field input data
         input = UIController.getInput();
+        console.log(input);
 
         // 2. Addthe item tot the budget controller
 
@@ -73,7 +87,7 @@ let appController = (function(fn1, fn2) {
 
     };
 
-    document.querySelector('.add__btn').addEventListener('click', addItem);
+    document.querySelector(DomStrings.inputBtn).addEventListener('click', addItem);
 
     document.addEventListener('keypress', function(event) {
 
