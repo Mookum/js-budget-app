@@ -16,7 +16,7 @@
 
 body {
     color: #555;
-    font-family: Open Sans;
+    font-family: Open Sans, serif;
     font-size: 16px;
     position: relative;
     height: 100vh;
@@ -33,7 +33,7 @@ body {
 
 .top {
     height: 40vh;
-    background-image: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)), url(back.png);
+    background-image: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)), url('../img/back.png');
     background-size: cover;
     background-position: center;
     position: relative;
@@ -252,7 +252,6 @@ h2 {
     background: none;
     border: none;
     cursor: pointer;
-    display: inline-block;
     vertical-align: middle;
     line-height: 1;
     display: none;
@@ -275,4 +274,3 @@ h2 {
 
 .unpaid .item__percentage { box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.1); }
 .unpaid:hover .item__description { font-weight: 900; }
-
