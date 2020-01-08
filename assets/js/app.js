@@ -8,8 +8,8 @@
  * This app will keep track of our income and outgoing budget.
  *
  * --------------------------------------------
- * TODO: [] Add event handler
- * TODO: [] Get input values
+ * DONE: [x] Add event handler
+ * DONE: [x] Get input values
  * TODO: [] Add the new item to our data structure
  * TODO: [] Add the new item to the UI
  * TODO: [] Calculate budget
@@ -25,6 +25,14 @@
  *
  */
 
+// Domstrings
+let DomStrings = {
+    inputType: '.add__type',
+    inputDescription: '.add__description',
+    inputValue: '.add__value',
+    inputBtn: '.add__btn'
+};
+
 // Budget controller
 let budgetController = (function() {
 
@@ -35,18 +43,11 @@ let budgetController = (function() {
 // UI controller
 let UIController = (function() {
 
-    // Domstrings && var
-    let DomStrings = {
-      inputType: '.add__type',
-      inputDescription: '.add__description',
-      inputValue: '.add__value',
-      inputBtn: '.add__btn'
-    };
-
     // Get the values from the form
-    // + / -
-    // Description
-    // Value
+    // A: + / -
+    // B: Description
+    // C: Value
+
     return {
         getInput: function() {
             return {
@@ -54,13 +55,8 @@ let UIController = (function() {
                 description: document.querySelector(DomStrings.inputDescription).value,
                 value: document.querySelector(DomStrings.inputValue).value,
             }
-        },
-
-        getDomStrings: function () {
-            return DomStrings;
         }
     };
-
 
 })();
 
@@ -68,16 +64,34 @@ let UIController = (function() {
 let appController = (function(fn1, fn2) {
 
     // variables
-    let input;
-    let DomStrings = UIController.getDomStrings();
+    let input, addItem, setupEventListeners;
 
-    let addItem = function() {
+    // EventListeners
+    setupEventListeners = function() {
+
+        // Get value when click the button
+        document.querySelector(DomStrings.inputBtn).addEventListener('click', addItem);
+
+        // Get value when press return key
+        document.addEventListener('keypress', function(event) {
+
+            // variables
+            let keyCode = 13; // 13 = Enter key
+
+            // noinspection JSDeprecatedSymbols
+            if(event["keyCode"] === keyCode || event.which === keyCode) {
+                addItem();
+            }
+        });
+    };
+
+    addItem = function() {
 
         // 1. Get the field input data
         input = UIController.getInput();
         console.log(input);
 
-        // 2. Addthe item tot the budget controller
+        // 2. Add the item tot the budget controller
 
         // 3. Add the item to the UI
 
@@ -87,17 +101,13 @@ let appController = (function(fn1, fn2) {
 
     };
 
-    document.querySelector(DomStrings.inputBtn).addEventListener('click', addItem);
-
-    document.addEventListener('keypress', function(event) {
-
-        // variables
-        let keyCode = 13; // 13 = Enter key
-
-        if(event["keyCode"] === keyCode || event.which === keyCode) {
-            addItem();
+    return {
+        init: function() {
+            console.log('Yep');
+            setupEventListeners();
         }
-    });
+    };
 
 })(budgetController, UIController);
 
+appController.init();
