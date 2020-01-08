@@ -23,10 +23,9 @@
  * Controller module: controle the entire app
  * --------------------------------------------
  *
- */
-
-/**
- *  * DomStrings
+ *
+ *
+ * DomStrings
  * // Here we can easy assign ForExample: a html element
  *
  * @type {{inputDescription: string, inputValue: string, inputType: string, inputBtn: string}}
@@ -43,7 +42,6 @@ let budgetController = (function() {
 
     // Variables
     let Item;
-
 
     /**
      * Create item object datatype to use for each item we add or delete
