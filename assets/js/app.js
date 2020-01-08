@@ -25,7 +25,12 @@
  *
  */
 
-// Domstrings
+/**
+ *  * DomStrings
+ * // Here we can easy assign ForExample: a html element
+ *
+ * @type {{inputDescription: string, inputValue: string, inputType: string, inputBtn: string}}
+ */
 let DomStrings = {
     inputType: '.add__type',
     inputDescription: '.add__description',
@@ -36,7 +41,19 @@ let DomStrings = {
 // Budget controller
 let budgetController = (function() {
 
-    // some code
+    // Variables
+    let Item;
+
+
+    /**
+     * Create item object datatype to use for each item we add or delete
+     */
+    Item = function(id, type, desc, val) {
+        this.id = id; // Unique id
+        this.type = type; // type of item: income or expense
+        this.desc = desc; // Item description
+        this.val = val; // value of the item
+    };
 
 })();
 
@@ -57,7 +74,6 @@ let UIController = (function() {
             }
         }
     };
-
 })();
 
 // Global APP controller
@@ -69,10 +85,10 @@ let appController = (function(fn1, fn2) {
     // EventListeners
     setupEventListeners = function() {
 
-        // Get value when click the button
+        // Get value when click the butto
         document.querySelector(DomStrings.inputBtn).addEventListener('click', addItem);
 
-        // Get value when press return key
+        // Get value when press return ke
         document.addEventListener('keypress', function(event) {
 
             // variables
@@ -89,7 +105,6 @@ let appController = (function(fn1, fn2) {
 
         // 1. Get the field input data
         input = UIController.getInput();
-        console.log(input);
 
         // 2. Add the item tot the budget controller
 
@@ -103,8 +118,8 @@ let appController = (function(fn1, fn2) {
 
     return {
         init: function() {
-            console.log('Yep');
             setupEventListeners();
+            console.log('Application has started.');
         }
     };
 
