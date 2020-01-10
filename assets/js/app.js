@@ -43,7 +43,7 @@ let DomStrings = {
 let budgetController = (function () {
 
     // Variables
-    let Item, data;
+    let Item, data, calculateTotal;
 
     /**
      * Create item object datatype to use for each item we add or delete
@@ -55,6 +55,17 @@ let budgetController = (function () {
         this.val = val; // value of the item
     };
 
+    calculateTotal = function(type) {
+        let sum;
+        sum = 0;
+
+        data.allItems[type].forEach(function(cur) {
+            sum += cur.val;
+        });
+
+        data.totals[type] = sum;
+    };
+
     data = {
         allItems: {
             exp: [],
@@ -63,19 +74,44 @@ let budgetController = (function () {
         totals: {
             exp: 0,
             inc: 0
-        }
+        },
+        budget: 0,
+        percentage: -1
     };
 
     return {
         addItem: function (type, desc, val) {
             let newItem, id;
             // create new id, get the length of the array and count + 1
-            id = data.allItems[type] > 0 ? data.allItems[type][data.allItems[type].length - 1].id + 1 : 1;
+            id = data.allItems[type].length > 0 ? data.allItems[type][data.allItems[type].length - 1].id + 1 : 1;
 
             newItem = new Item(id, type, desc, val);
             data.allItems[type].push(newItem);
 
             return newItem;
+        },
+
+        calculateBudget: function() {
+
+            // calculate total inc. and expenses
+            calculateTotal('exp');
+            calculateTotal('inc');
+
+            // calculate the budget: income - expenses
+            data.budget = data.totals.inc - data.totals.exp;
+
+            // calculate the percentage of income that we spent
+            data.percentage = data.totals.inc > 0 ? Math.round((data.totals.exp / data.totals.inc) * 100) : -1;
+
+        },
+
+        getBudget: function() {
+            return {
+                budget: data.budget,
+                totalInc: data.totals.inc,
+                totalExp: data.totals.exp,
+                percentage: data.percentage
+            }
         },
 
         testing: function () {
@@ -99,7 +135,7 @@ let UIController = (function () {
             return {
                 type: document.querySelector(DomStrings.inputType).value, // will be either inc or exp
                 desc: document.querySelector(DomStrings.inputDesc).value,
-                value: document.querySelector(DomStrings.inputValue).value,
+                value: parseFloat(document.querySelector(DomStrings.inputValue).value),
             }
         },
         addListItem: function (obj) {
@@ -187,25 +223,43 @@ let appController = (function (fn1, fn2) {
         });
     };
 
+    updateBudget = function() {
+        let budget;
+        // 1. Calculate the budget
+        budgetController.calculateBudget();
+
+        // 2. Return the budget
+        budget = budgetController.getBudget();
+
+        // 3. Display the bucget on the UI
+        console.log(budget);
+
+        // return function () {
+        //
+        // }
+
+
+    };
+
     addItem = function () {
 
         // 1. Get the field input data
         input = UIController.getInput();
 
-        console.log(input);
-        // 2. Add the item to the budget controller
-        newItem = budgetController.addItem(input.type, input.desc, input.value);
+        if(input.desc !== "" && !isNaN(input.value) && input.value > 0) {
 
-        // 3. Add the item to the UI
-        UIController.addListItem(newItem);
+            // 2. Add the item to the budget controller
+            newItem = budgetController.addItem(input.type, input.desc, input.value);
 
-        // 4. clear fields
-        UIController.clearForm();
+            // 3. Add the item to the UI
+            UIController.addListItem(newItem);
 
-        // 5. Calculate the budget
+            // 4. clear fields
+            UIController.clearForm();
 
-        // 6. Display the bucget on the UI
-
+            // 5. calculate budget and update UI
+            updateBudget();
+        }
     };
 
     return {
