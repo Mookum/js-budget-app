@@ -10,10 +10,10 @@
  * --------------------------------------------
  * DONE: [x] Add event handler
  * DONE: [x] Get input values
- * TODO: [] Add the new item to our data structure
- * TODO: [] Add the new item to the UI
- * TODO: [] Calculate budget
- * TODO: [] Update the UI
+ * Done: [x] Add the new item to our data structure
+ * Done: [x] Add the new item to the UI
+ * Done: [x] Calculate budget
+ * Done: [x] Update the UI
  * --------------------------------------------
  *
  * Modules
@@ -37,6 +37,11 @@ let DomStrings = {
     inputBtn: '.add__btn',
     incomeContainer: '.income__list',
     expensesContainer: '.expenses__list',
+    budgetLabel: '.budget__value',
+    incomeLabel: '.budget__income--value',
+    inPercantageLabel: '.budget__income--percentage',
+    expensesLabel: '.budget__expenses--value',
+    exPercentageLabel: '.budget__expenses--percentage'
 };
 
 // Budget controller
@@ -194,6 +199,22 @@ let UIController = (function () {
                 current.value = "";
             });
             formArr[0].focus();
+        },
+
+        displayBudget: function(obj) {
+
+            document.querySelector(DomStrings.budgetLabel).innerHTML = obj.budget + '&euro;';
+            document.querySelector(DomStrings.incomeLabel).innerHTML = obj.totalInc + '&euro;';
+            document.querySelector(DomStrings.expensesLabel).innerHTML = obj.totalExp + '&euro;';
+
+
+            if(obj.percentage > 0)
+            {
+                document.querySelector(DomStrings.exPercentageLabel).innerHTML = obj.percentage + '&percnt;';
+            } else
+                {
+                 document.querySelector(DomStrings.exPercentageLabel).innerHTML = '---';
+            }
         }
     };
 })();
@@ -232,13 +253,11 @@ let appController = (function (fn1, fn2) {
         budget = budgetController.getBudget();
 
         // 3. Display the bucget on the UI
-        console.log(budget);
+        UIController.displayBudget(budget);
 
-        // return function () {
+        // return {
         //
         // }
-
-
     };
 
     addItem = function () {
@@ -265,6 +284,12 @@ let appController = (function (fn1, fn2) {
     return {
         init: function () {
             setupEventListeners();
+            UIController.displayBudget({
+                budget: 0,
+                totalInc: 0,
+                totalExp: 0,
+                percentage: -1
+            });
             console.log('Application has started.');
         }
     };
