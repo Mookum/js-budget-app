@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020. -  Porschmann David
+ */
+
 /**
  * Startdate: 08-01-2020
  * Creator: Porschmann David
@@ -25,10 +29,11 @@
  *
  *
  *
- * DomStrings
- * // Here we can easy assign ForExample: a html element
- *
- * @type {{inputDescription: string, inputValue: string, inputType: string, inputBtn: string}}
+ * DomStrings object
+ * // Here we can easy assign ForExample: html elements
+ * @type {{container: string, itemPercentage: string, expensesLabel: string, inputDesc: string, expensesContainer:
+ *     string, exPercentageLabel: string, dateLabel: string, incomeContainer: string, inputValue: string, incomeLabel:
+ *     string, inPercentageLabel: string, inputType: string, budgetLabel: string, inputBtn: string}}
  */
 let DomStrings = {
     inputType: '.add__type',
@@ -168,9 +173,9 @@ let budgetController = (function () {
             }
         },
 
-        testing: function () {
-            console.log(data);
-        }
+        // testing: function () {
+        //     console.log(data);
+        // }
     }
 
 
@@ -179,7 +184,7 @@ let budgetController = (function () {
 // UI controller
 let UIController = (function () {
 
-    let reFormatNumbers;
+    let reFormatNumbers, nodeListForEach;
 
     // Get the values from the form
     // A: + / -
@@ -201,7 +206,7 @@ let UIController = (function () {
         dec = numSplit[1];
         if(int.length > 3) {
             int = int.substr(0, int.length - 3) + ',' + int.substr(int.length - 3, 3);
-        };
+        }
 
         return (type === 'exp' ? '-' : '+') + ' ' + int + '.' + dec;
     };
@@ -224,42 +229,41 @@ let UIController = (function () {
         addListItem: function (obj) {
             let html, string, el;
             // Create html string with placeholder text
-            switch (obj.type) {
-                case 'inc':
-                    el = DomStrings.incomeContainer;
-                    html =  '<div class="item clearfix" id="inc-%id%">' +
-                                '<div class="item__description">%desc%</div>' +
-                                '<div class="right clearfix"> ' +
-                                    '<div class="item__value">%value% &euro;</div> ' +
-                                    '<div class="item__delete"> ' +
-                                        '<button class="item__delete--btn" data-type="inc" data-id="%id%">' +
-                                            '<i class="ion-ios-close-outline"></i>' +
-                                        '</button> ' +
-                                    '</div>' +
+            if (obj.type === 'inc') {
+                el = DomStrings.incomeContainer;
+                html =  '<div class="item clearfix" id="inc-%id%">' +
+                            '<div class="item__description">%desc%</div>' +
+                            '<div class="right clearfix"> ' +
+                                '<div class="item__value">%value% &euro;</div> ' +
+                                '<div class="item__delete" data-type="inc" data-id="%id%"> ' +
+                                    '<button class="item__delete--btn">' +
+                                        '<i class="ion-ios-close-outline"></i>' +
+                                    '</button> ' +
                                 '</div>' +
-                            '</div>';
-                    break;
-                default:
-                    el = DomStrings.expensesContainer;
-                    html =  '<div class="item clearfix" id="exp-%id%">\n' +
-                                '<div class="item__description">%desc%</div>\n' +
-                                '<div class="right clearfix">\n' +
-                                    '<div class="item__value">%value% &euro;</div>\n' +
-                                    '<div class="item__percentage">10%</div>\n' +
-                                    '<div class="item__delete">\n' +
-                                        '<button class="item__delete--btn" data-type="exp" data-id="%id%">' +
-                                            '<i class="ion-ios-close-outline"></i>' +
-                                        '</button>\n' +
-                                    '</div>\n' +
+                            '</div>' +
+                        '</div>';
+            } else {
+                el = DomStrings.expensesContainer;
+                html =  '<div class="item clearfix" id="exp-%id%">\n' +
+                            '<div class="item__description">%desc%</div>\n' +
+                            '<div class="right clearfix">\n' +
+                                '<div class="item__value">%value% &euro;</div>\n' +
+                                '<div class="item__percentage">10%</div>\n' +
+                                '<div class="item__delete" data-type="exp" data-id="%id%">\n' +
+                                    '<button class="item__delete--btn">' +
+                                        '<i class="ion-ios-close-outline"></i>' +
+                                    '</button>\n' +
                                 '</div>\n' +
-                             '</div>';
+                            '</div>\n' +
+                         '</div>';
             }
 
             // replace the placeholdertext with actual data
             String.prototype.allReplace = function(obj) {
-                let retStr, x;
+                let retStr;
                 retStr = this;
-                for (x in obj) {
+                for (let x in obj) {
+                    // noinspection JSUnfilteredForInLoop
                     retStr = retStr.replace(new RegExp(x, 'g'), obj[x]);
                 }
                 return retStr;
@@ -285,7 +289,7 @@ let UIController = (function () {
             form = document.querySelectorAll(DomStrings.inputDesc + ',' + DomStrings.inputValue);
             formArr = Array.prototype.slice.call(form);
 
-            formArr.forEach(function(current, i, arr) {
+            formArr.forEach(function(current) {
                 current.value = "";
             });
             formArr[0].focus();
@@ -297,7 +301,6 @@ let UIController = (function () {
             document.querySelector(DomStrings.incomeLabel).innerHTML = reFormatNumbers(obj.type, obj.totalInc) + '&euro;';
             document.querySelector(DomStrings.expensesLabel).innerHTML = obj.totalExp + '&euro;';
 
-
             if(obj.percentage > 0)
             {
                 document.querySelector(DomStrings.exPercentageLabel).innerHTML = obj.percentage + '&percnt;';
@@ -308,7 +311,7 @@ let UIController = (function () {
         },
 
         displayPercentages: function(percentages) {
-            let fields, nodeListForEach;
+            let fields;
 
             fields = document.querySelectorAll(DomStrings.itemPercentage);
 
@@ -348,10 +351,10 @@ let UIController = (function () {
 })();
 
 // Global APP controller
-let appController = (function (fn1, fn2) {
+let appController = (function () {
 
     // variables
-    let input, addItem, setupEventListeners, newItem, deleteItem, updatePercentages;
+    let input, addItem, setupEventListeners, newItem, deleteItem, updateBudget, updatePercentages;
 
     // EventListeners
     setupEventListeners = function () {
@@ -423,15 +426,15 @@ let appController = (function (fn1, fn2) {
         }
     };
 
-    deleteItem = function (event) {
-        let item, itemType;
+    deleteItem = function (e) {
+        let itemId, itemType;
 
         // item thats clicked
-        itemId = parseInt(event.target.parentNode.getAttribute('data-id'));
+        itemId = parseInt(e.target.parentNode.parentNode.getAttribute('data-id'));
 
         // check item type income or expense
         if (itemId) {
-            itemType = event.target.parentNode.getAttribute('data-type');
+            itemType = e.target.parentNode.parentNode.getAttribute('data-type');
 
             UIController.deleteListItem(itemType, itemId);
 
@@ -439,12 +442,7 @@ let appController = (function (fn1, fn2) {
         }
 
         updateBudget();
-
-        // update percentages
-
     };
-
-
 
     return {
         init: function () {
